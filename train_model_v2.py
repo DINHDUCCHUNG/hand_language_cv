@@ -1,3 +1,4 @@
+import math
 import os
 import warnings
 import cv2
@@ -6,6 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.style as style
 import numpy as np
 import pandas as pd
+import tensorflow as tf
 from PIL import Image
 from tensorflow.keras import models, layers, optimizers
 from tensorflow.keras.applications.vgg16 import VGG16
@@ -18,6 +20,7 @@ from tensorflow.keras.utils import to_categorical
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
 from PIL import ImageFile
+import tensorflow_addons as tfa
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -29,7 +32,7 @@ gestures_map = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'F': 4, 'H': 5, 'I': 6, 'L': 7, 
 gesture_names = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'F', 5: 'H', 6: 'I', 7: 'L', 8: 'V', 9: 'W'}
 
 image_path = 'data'
-models_path = 'models/saved_model.hdf5'
+models_path = 'models_v2/saved_model.hdf5'
 rgb = False
 imageSize = 224
 
@@ -39,16 +42,36 @@ def process_image(path):
     img = Image.open(path)
     img = img.resize((imageSize, imageSize))
     img = np.array(img)
+    img = np.stack((img,) * 3, axis=-1)
+    return img
+
+
+# Ham xu ly anh rotate +-20deg
+def image_rotate(image):
+    print("#rotate image")
+    rotation = 20 * math.pi / 180
+    rotate_prob = tf.random.uniform([], -rotation, rotation, dtype=tf.float32)
+    img = tfa.image.rotate(image, rotate_prob, interpolation="BILINEAR")
+    img = img.numpy()
+    return img
+
+
+# Ham xu ly anh flip left to right
+def flip_horizontal(image):
+    print("#flip image")
+    img = tf.image.flip_left_right(image)
+    img = img.numpy()
     return img
 
 
 # Xu ly du lieu dau vao
 def process_data(X_data, y_data):
     X_data = np.array(X_data, dtype='float32')
-    if rgb:
-        pass
-    else:
-        X_data = np.stack((X_data,) * 3, axis=-1)
+    print("shape", X_data.shape)
+    # if rgb:
+    #     pass
+    # else:
+    #     X_data = np.stack((X_data,) * 3, axis=-1)
     X_data /= 255
     y_data = np.array(y_data)
     y_data = to_categorical(y_data)
@@ -59,6 +82,7 @@ def process_data(X_data, y_data):
 def walk_file_tree(image_path):
     X_data = []
     y_data = []
+    i = 0
     for directory, subdirectories, files in os.walk(image_path):
         for file in files:
             if not file.startswith('.'):
@@ -68,8 +92,27 @@ def walk_file_tree(image_path):
                     print(gesture_name)
                     print(gestures_map[gesture_name])
                     y_data.append(gestures_map[gesture_name])
-                    X_data.append(process_image(path))
-
+                    # data argument
+                    image = process_image(path)
+                    data_argument_prob = tf.random.uniform([], 0, 1.0, dtype=tf.float32)
+                    if data_argument_prob > 0.75:
+                        image = flip_horizontal(image)
+                        X_data.append(image)
+                        # save
+                        print("save index", i)
+                        im = Image.fromarray(image)
+                        im.save("./data-train/image_" + str(i) + ".jpg")
+                    elif data_argument_prob > 0.5:
+                        image = image_rotate(image)
+                        X_data.append(image)
+                        # save
+                        print("save index", i)
+                        im = Image.fromarray(image)
+                        im.save("./data-train/image_" + str(i) + ".jpg")
+                    else:
+                        X_data.append(image)
+                    # X_data.append(image)
+                    i = i + 1
             else:
                 continue
 
@@ -113,4 +156,4 @@ model.fit(X_train, y_train, epochs=50, batch_size=64, validation_data=(X_test, y
           callbacks=[early_stopping, model_checkpoint])
 
 # Save the model after training into file
-model.save('models/mymodel.h5')
+model.save('models_v2/mymodel.h5')

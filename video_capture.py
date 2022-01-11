@@ -1,7 +1,7 @@
 import cv2
 
 # Opens the inbuilt camera of laptop to capture video.
-cap = cv2.VideoCapture("./videos/L.mp4")
+cap = cv2.VideoCapture("./videos/W.mp4")
 i = 0
 
 while (cap.isOpened()):
@@ -17,7 +17,7 @@ while (cap.isOpened()):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # img = cv2.resize(img, (224, 224))
     ret1, image = cv2.threshold(img, 120, 255, cv2.THRESH_BINARY)
-    cv2.imwrite("./data/" + 'L_' + str(i) + '.jpg', image)
+    cv2.imwrite("./data/" + 'W_' + str(i) + '.jpg', image)
     i += 1
 
 cap.release()

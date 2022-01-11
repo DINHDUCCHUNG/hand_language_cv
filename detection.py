@@ -9,10 +9,10 @@ prediction = ''
 score = 0
 bgModel = None
 
-gesture_names = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F', 6: 'G', 7: 'I', 8: 'L', 9: 'V'}
+gesture_names = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'F', 5: 'H', 6: 'I', 7: 'L', 8: 'V', 9: 'W'}
 
 # Load model tu file da train
-model = load_model('models/mymodel.h5')
+model = load_model('models_v2/mymodel.h5')
 
 # Ham de predict xem la ky tu gi
 def predict_rgb_image_vgg(image):
