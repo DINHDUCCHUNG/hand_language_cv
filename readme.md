@@ -16,7 +16,7 @@
 
 #### train_model_v2.py
 
-- Load data set and perform data argument with flip horizontal and random rotate from -40deg to 40deg
+- Load data set and perform data augmentation with flip horizontal and random rotate from -40deg to 40deg
 - Split 80% data train and 20% data test
 - Use `VGG16` pretrain model and some addition fully-connected layers with relu and the last layer with softmax
   activation function
@@ -24,7 +24,7 @@
 
 #### train_model_resnet.py
 
-- Load data set and perform data argument with flip horizontal and random rotate from -40deg to 40deg
+- Load data set and perform data augmentation with flip horizontal and random rotate from -40deg to 40deg
 - Split 80% data train and 20% data test
 - Use `inception_resnet_v2` pretrain model and some addition fully-connected layers with relu and the last layer with
   softmax activation function
@@ -32,7 +32,7 @@
 
 #### train_model_v4.py
 
-- Load data set and perform data argument with flip horizontal and random rotate from -40deg to 40deg
+- Load data set and perform data augmentation with flip horizontal and random rotate from -40deg to 40deg
 - Split 80% data train and 20% data test
 - Use `xception` pretrain model and some addition fully-connected layers with relu and the last layer with softmax
   activation function
