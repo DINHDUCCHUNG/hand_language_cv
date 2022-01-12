@@ -12,7 +12,7 @@ bgModel = None
 gesture_names = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'F', 5: 'H', 6: 'I', 7: 'L', 8: 'V', 9: 'W'}
 
 # Load model tu file da train
-model = load_model('models_v2/mymodel.h5')
+model = load_model('models_v4/mymodel.h5')
 
 # Ham de predict xem la ky tu gi
 def predict_rgb_image_vgg(image):
@@ -48,7 +48,7 @@ bgSubThreshold = 50#50
 learningRate = 0
 
 # Nguong du doan ky tu
-predThreshold= 95
+predThreshold= 70
 
 isBgCaptured = 0  # Bien luu tru da capture background chua
 

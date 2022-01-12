@@ -32,7 +32,7 @@ gestures_map = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'F': 4, 'H': 5, 'I': 6, 'L': 7, 
 gesture_names = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'F', 5: 'H', 6: 'I', 7: 'L', 8: 'V', 9: 'W'}
 
 image_path = 'data'
-models_path = 'models_v2/saved_model.hdf5'
+models_path = 'models_v4/saved_model.hdf5'
 rgb = False
 imageSize = 224
 
@@ -46,10 +46,10 @@ def process_image(path):
     return img
 
 
-# Ham xu ly anh rotate +-40deg
+# Ham xu ly anh rotate +-20deg
 def image_rotate(image):
     print("#rotate image")
-    rotation = 40 * math.pi / 180
+    rotation = 20 * math.pi / 180
     rotate_prob = tf.random.uniform([], -rotation, rotation, dtype=tf.float32)
     img = tfa.image.rotate(image, rotate_prob, interpolation="BILINEAR")
     img = img.numpy()
@@ -132,7 +132,7 @@ early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, ver
                                restore_best_weights=True)
 
 # Initial the model
-model1 = VGG16(weights='imagenet', include_top=False, input_shape=(imageSize, imageSize, 3))
+model1 = tf.keras.applications.Xception(weights='imagenet', include_top=False, input_shape=(imageSize, imageSize, 3))
 optimizers1 = optimizers.Adam()
 base_model = model1
 
@@ -156,4 +156,4 @@ model.fit(X_train, y_train, epochs=50, batch_size=64, validation_data=(X_test, y
           callbacks=[early_stopping, model_checkpoint])
 
 # Save the model after training into file
-model.save('models_v2/mymodel.h5')
+model.save('models_v4/mymodel.h5')
